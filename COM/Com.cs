@@ -84,7 +84,7 @@ namespace M_Pig.COM
         {
 
             List<ComList> strs = new List<ComList>();
-            ComList comList = new ComList();
+            
             //string temp,va,vb;
             try
             {
@@ -97,12 +97,12 @@ namespace M_Pig.COM
                         {
                             if (hardInfo.Properties[propKey].Value.ToString().Contains("COM"))
                             {
+                                ComList comList = new ComList();
                                 string temp = hardInfo.Properties[propKey].Value.ToString();
                                 string va = temp.Substring(temp.IndexOf("(") + 1, temp.IndexOf(")") - (temp.IndexOf("(") + 1));
                                 string vb = temp.Substring(0, temp.IndexOf("("));
                                 comList.ComNum = va;
                                 comList.Description = va + " " + vb;
-                                Console.WriteLine(comList.Description);
                                 strs.Add(comList);
                             }
                         }                        
