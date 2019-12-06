@@ -29,12 +29,10 @@ namespace M_Pig
         {
             Console.WriteLine("start\r\n");
             Com ComX = new Com();
-            Console.WriteLine(string.Join("\r\n", ComX.Ss[0].ComNum));
             this.comSelect.ItemsSource = ComX.Ss;
             comSelect.DisplayMemberPath = "Description";
             comSelect.SelectedValuePath = "ComNum";
             comSelect.SelectedIndex = 0;
-            Console.WriteLine(comSelect.SelectedValue);
         }
     }
 }
