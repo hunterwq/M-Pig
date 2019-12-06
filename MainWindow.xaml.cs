@@ -1,4 +1,5 @@
-﻿using System;
+﻿using M_Pig.COM;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,8 @@ namespace M_Pig
         public MainWindow()
         {
             InitializeComponent();
+            Com c = new Com();
+            Console.WriteLine(string.Join("\r\n",c.Ss));
         }
     }
 }
