@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace M_Pig.COM
 {
+    class ComList
+    {
+        public string ComNum { get; set; }
+        public string Description { get; set; }
+    }
     class Com
     {
 
@@ -75,10 +80,11 @@ namespace M_Pig.COM
         /// <param name="hardType"></param>
         /// <param name="propKey"></param>
         /// <returns></returns>
-        public static string[] MulGetHardwareInfo(HardwareEnum hardType, string propKey)
+        public static List<ComList> MulGetHardwareInfo(HardwareEnum hardType, string propKey)
         {
 
-            List<string> strs = new List<string>();
+            List<ComList> strs = new List<ComList>();
+            ComList comList = new ComList();
             string temp,va,vb;
             try
             {
@@ -94,13 +100,15 @@ namespace M_Pig.COM
                                 temp = hardInfo.Properties[propKey].Value.ToString();
                                 va = temp.Substring(temp.IndexOf("(") + 1, temp.IndexOf(")") - (temp.IndexOf("(") + 1));
                                 vb = temp.Substring(0, temp.IndexOf("("));
-                                strs.Add(va + " " + vb);
+                                comList.ComNum = va;
+                                comList.Description = va + " " + vb;
+                                strs.Add(comList);
                             }
                         }                        
                     }
                     searcher.Dispose();
                 }
-                return strs.ToArray();
+                return strs;
             }
             catch
             {
@@ -112,9 +120,10 @@ namespace M_Pig.COM
         //通过WMI获取COM端口
         //string[] ss = (MulGetHardwareInfo(HardwareEnum.Win32_PnPEntity, "Name"));
 
-        public string[] Ss { get; set; } = (MulGetHardwareInfo(HardwareEnum.Win32_PnPEntity, "Name"));
+        //public string[] Ss { get; set; } = (MulGetHardwareInfo(HardwareEnum.Win32_PnPEntity, "Name"));
+        public List<ComList> Ss { get; set; } = (MulGetHardwareInfo(HardwareEnum.Win32_PnPEntity, "Name"));
 
-        public void ComUpdate()
+    public void ComUpdate()
         {
             Ss = (MulGetHardwareInfo(HardwareEnum.Win32_PnPEntity, "Name"));
         }

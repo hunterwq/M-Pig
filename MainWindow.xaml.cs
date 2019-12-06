@@ -23,9 +23,18 @@ namespace M_Pig
     {
         public MainWindow()
         {
-            InitializeComponent();
-            Com c = new Com();
-            Console.WriteLine(string.Join("\r\n",c.Ss));
+            InitializeComponent(); 
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            Console.WriteLine("start\r\n");
+            Com ComX = new Com();
+            Console.WriteLine(string.Join("\r\n", ComX.Ss[0].ComNum));
+            this.comSelect.ItemsSource = ComX.Ss;
+            comSelect.DisplayMemberPath = "Description";
+            comSelect.SelectedValuePath = "ComNum";
+            comSelect.SelectedIndex = 0;
+            Console.WriteLine(comSelect.SelectedValue);
         }
     }
 }
