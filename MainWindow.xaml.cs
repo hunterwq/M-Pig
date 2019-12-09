@@ -36,7 +36,7 @@ namespace M_Pig
             comSelect.SelectedValuePath = "ComNum";
             comSelect.SelectedIndex = 0;
             SqliteDbContext context = new SqliteDbContext();
-            var b = context.Employees.Where()
+            var b = context.Employees.Where(p => p.EmployeeID == 1).FirstOrDefault();
         }
     }
 }
