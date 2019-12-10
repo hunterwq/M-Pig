@@ -6,6 +6,7 @@ using System.Linq;
 using System.Management;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows;
 
 namespace M_Pig.COM
@@ -133,13 +134,14 @@ namespace M_Pig.COM
         }
     }
 
-    class Modbus
+    class MyModbus
     {
         public IModbusSerialMaster master { get; set; }
 
         public SerialPort Port { get; set; }
         public string ComNum { get; set; }
-        private void ModbusInit(string num)
+        private Timer tmr { get; set; }=new Timer();
+        public bool ModbusInit(string num)
         {
             Port = new SerialPort(num, 9600, Parity.None, 8, StopBits.One);
             try
@@ -147,19 +149,41 @@ namespace M_Pig.COM
                 Port.Open();
                 // create modbus master 
                 master = ModbusSerialMaster.CreateRtu(Port);
+                master.Transport.ReadTimeout = 2000;
+                tmr.Interval = 1000;
+                tmr.Elapsed += Tmr_Elapsed;
+                tmr.Start();
+                return true;
 
             }
             catch(Exception ex)
             {
                 MessageBox.Show(ex.ToString());
+                return false;
             }
            
         }
-        public Modbus(string num)
+        public void ModbusDeinit()
+        {
+            Port.Close();
+            tmr.Stop();
+            tmr.Elapsed -= Tmr_Elapsed;
+        }
+
+        private void Tmr_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            ushort[] a =  master.ReadInputRegisters(1, 1, 1);
+            Console.WriteLine(123);
+        }
+
+        public MyModbus()
+        {
+
+        }
+        public MyModbus(string num)
         {
             ComNum = num;
-            ModbusInit(ComNum);
-        }
-        
+            ModbusInitAsync(ComNum);
+        } 
     }
 }

@@ -27,16 +27,35 @@ namespace M_Pig
         {
             InitializeComponent(); 
         }
+        private Com ComX { get; set; } = new Com();
+        private MyModbus modbus { get; set; } = new MyModbus();
+
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             Console.WriteLine("start\r\n");
-            Com ComX = new Com();
+            
             this.comSelect.ItemsSource = ComX.Ss;
             comSelect.DisplayMemberPath = "Description";
             comSelect.SelectedValuePath = "ComNum";
             comSelect.SelectedIndex = 0;
             SqliteDbContext context = new SqliteDbContext();
             var b = context.Employees.Where(p => p.EmployeeID == 1).FirstOrDefault();
+        }
+
+        private void comButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (modbus.ModbusInitAsync(ComX.Ss[comSelect.SelectedIndex].ComNum))
+                comButton.Content = "关闭串口";
+            else
+            {
+                comButton.IsChecked = false;
+            }
+        }
+
+        private void comButton_Unchecked(object sender, RoutedEventArgs e)
+        {
+            modbus.ModbusDeinit();
+            comButton.Content = "打开串口";
         }
     }
 }

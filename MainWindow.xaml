@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:M_Pig"
         xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui" xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" x:Class="M_Pig.MainWindow"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded">
+        Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" WindowStyle="SingleBorderWindow" >
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="23*"/>
@@ -21,22 +21,22 @@
             <dxwui:HamburgerMenu.Content>
                 <dxwui:NavigationFrame >
                     <TabControl BorderThickness="0">
-                        <TabItem Visibility="Collapsed" IsSelected="{Binding ElementName=HmSetButton, Path=IsSelected,UpdateSourceTrigger=PropertyChanged,Mode=OneWay}">
+                        <TabItem Visibility="Collapsed" IsSelected="{Binding ElementName=HmSetButton, Path=IsSelected,Mode=OneWay}">
                             <Grid>
                                 <ComboBox x:Name="comSelect" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
-                                <Button Content="Button" HorizontalAlignment="Left" Margin="10,75,0,0" VerticalAlignment="Top" Width="120" ClickMode="Hover"/>
-                                <dxe:ToggleSwitch Grid.Column="1" HorizontalAlignment="Left" Margin="10,169,0,0" VerticalAlignment="Top" Height="23"/>
+                                <ToggleButton x:Name="comButton" Content="打开串口" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="120" BorderThickness="0" Checked="comButton_Checked" Unchecked="comButton_Unchecked"/>
                             </Grid>
                         </TabItem>
                         <TabItem Visibility="Collapsed">
                             <Grid>
+                                <TextBox x:Name="textLog" />
                             </Grid>
                         </TabItem>
                     </TabControl>
                 </dxwui:NavigationFrame>
             </dxwui:HamburgerMenu.Content>
-            <dxwui:HamburgerMenuNavigationButton x:Name="Main" Content="Home" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Navigation/Home_16x16.png}" GlyphHeight="16"  />
-            <dxwui:HamburgerMenuNavigationButton x:Name="HmSetButton" Content="New Page" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Actions/AddItem_16x16.png}" GlyphHeight="16" IsSelected="True"/>
+            <dxwui:HamburgerMenuNavigationButton x:Name="Main" Content="Home" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Navigation/Home_16x16.png}" GlyphHeight="16"  IsSelected="false"/>
+            <dxwui:HamburgerMenuNavigationButton x:Name="HmSetButton" Content="New Page" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Actions/AddItem_16x16.png}" GlyphHeight="16" IsSelected="true"/>
             <dxwui:HamburgerMenuHyperlinkButton  Content="Support" NavigateUri="https://www.devexpress.com/Support/"/>
         </dxwui:HamburgerMenu>
         
