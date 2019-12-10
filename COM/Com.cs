@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Modbus.Device;
+using System;
 using System.Collections.Generic;
+using System.IO.Ports;
 using System.Linq;
 using System.Management;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace M_Pig.COM
 {
@@ -102,7 +105,7 @@ namespace M_Pig.COM
                                 string va = temp.Substring(temp.IndexOf("(") + 1, temp.IndexOf(")") - (temp.IndexOf("(") + 1));
                                 string vb = temp.Substring(0, temp.IndexOf("("));
                                 comList.ComNum = va;
-                                comList.Description = va + " " + vb;
+                                comList.Description = va + ":" + vb;
                                 strs.Add(comList);
                             }
                         }                        
@@ -124,9 +127,39 @@ namespace M_Pig.COM
         //public string[] Ss { get; set; } = (MulGetHardwareInfo(HardwareEnum.Win32_PnPEntity, "Name"));
         public List<ComList> Ss { get; set; } = (MulGetHardwareInfo(HardwareEnum.Win32_PnPEntity, "Name"));
 
-    public void ComUpdate()
+        public void ComUpdate()
         {
             Ss = (MulGetHardwareInfo(HardwareEnum.Win32_PnPEntity, "Name"));
         }
+    }
+
+    class Modbus
+    {
+        public IModbusSerialMaster master { get; set; }
+
+        public SerialPort Port { get; set; }
+        public string ComNum { get; set; }
+        private void ModbusInit(string num)
+        {
+            Port = new SerialPort(num, 9600, Parity.None, 8, StopBits.One);
+            try
+            { 
+                Port.Open();
+                // create modbus master 
+                master = ModbusSerialMaster.CreateRtu(Port);
+
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+           
+        }
+        public Modbus(string num)
+        {
+            ComNum = num;
+            ModbusInit(ComNum);
+        }
+        
     }
 }
