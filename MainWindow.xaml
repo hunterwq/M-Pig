@@ -20,7 +20,7 @@
             </dxwui:HamburgerMenu.BottomBarItems>
             <dxwui:HamburgerMenu.Content>
                 <dxwui:NavigationFrame >
-                    <TabControl BorderThickness="0">
+                    <TabControl BorderThickness="0" Background="#FFF0F2F3">
                         <TabItem Visibility="Collapsed" IsSelected="{Binding ElementName=HmSetButton, Path=IsSelected,Mode=OneWay}">
                             <Grid>
                                 <ComboBox x:Name="comSelect" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
@@ -39,8 +39,6 @@
             <dxwui:HamburgerMenuNavigationButton x:Name="HmSetButton" Content="New Page" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Actions/AddItem_16x16.png}" GlyphHeight="16" IsSelected="true"/>
             <dxwui:HamburgerMenuHyperlinkButton  Content="Support" NavigateUri="https://www.devexpress.com/Support/"/>
         </dxwui:HamburgerMenu>
-        
-
 
     </Grid>
 </Window>

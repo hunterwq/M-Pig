@@ -1,4 +1,5 @@
-﻿using Modbus.Device;
+﻿using M_Pig.Controler;
+using Modbus.Device;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -136,6 +137,7 @@ namespace M_Pig.COM
 
     class MyModbus
     {
+        public ControlerClass controler { get; set; }
         public IModbusSerialMaster master { get; set; }
 
         public SerialPort Port { get; set; }
@@ -172,8 +174,9 @@ namespace M_Pig.COM
 
         private void Tmr_Elapsed(object sender, ElapsedEventArgs e)
         {
-            ushort[] a =  master.ReadInputRegisters(1, 1, 1);
-            Console.WriteLine(123);
+            ushort[] a = master.ReadInputRegisters(BitConverter.GetBytes(controler.ModbusAddress)[1],13,1);
+            controler.RoomCount =  a[1];
+            Console.WriteLine(controler.RoomCount);
         }
 
         public MyModbus()
@@ -183,7 +186,7 @@ namespace M_Pig.COM
         public MyModbus(string num)
         {
             ComNum = num;
-            ModbusInitAsync(ComNum);
+            ModbusInit(ComNum);
         } 
     }
 }

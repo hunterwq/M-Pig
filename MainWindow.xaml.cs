@@ -44,7 +44,7 @@ namespace M_Pig
 
         private void comButton_Checked(object sender, RoutedEventArgs e)
         {
-            if (modbus.ModbusInitAsync(ComX.Ss[comSelect.SelectedIndex].ComNum))
+            if (modbus.ModbusInit(ComX.Ss[comSelect.SelectedIndex].ComNum))
                 comButton.Content = "关闭串口";
             else
             {
