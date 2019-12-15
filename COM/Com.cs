@@ -2,13 +2,16 @@
 using Modbus.Device;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO.Ports;
 using System.Linq;
 using System.Management;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace M_Pig.COM
 {
@@ -137,26 +140,41 @@ namespace M_Pig.COM
 
     class MyModbus
     {
-        public ControlerClass controler { get; set; }
-        public IModbusSerialMaster master { get; set; }
+        public delegate void DeviceScanProgress(int d);
+        public event DeviceScanProgress DeviceScanProgressEvent;
+        public List<ControlerClass> Controler { get; set; } = new List<ControlerClass>();
+        public IModbusSerialMaster Master { get; set; }
 
         public SerialPort Port { get; set; }
-        public string ComNum { get; set; }
-        private Timer tmr { get; set; }=new Timer();
+        public string ComNum { get; set; } = "COM1";
+
+        public int Delay { get; set; } = 5;
+        public void DataScan()
+        {
+            while (true)
+            {
+                for (int i = 0; i < Controler.Count; i++)
+                {
+                    Console.WriteLine("DataRead");
+                    Console.WriteLine(i);
+                    Console.WriteLine(Controler[i].RoomCount);
+                    DataRead(i);
+                }
+                Thread.Sleep(new TimeSpan(0, 0, Delay));
+            } 
+        }
         public bool ModbusInit(string num)
         {
+            ComNum = num;
             Port = new SerialPort(num, 9600, Parity.None, 8, StopBits.One);
             try
-            { 
+            {
                 Port.Open();
                 // create modbus master 
-                master = ModbusSerialMaster.CreateRtu(Port);
-                master.Transport.ReadTimeout = 2000;
-                tmr.Interval = 1000;
-                tmr.Elapsed += Tmr_Elapsed;
-                tmr.Start();
+                Master = ModbusSerialMaster.CreateRtu(Port);
+                Master.Transport.ReadTimeout = 500;
+                Master.Transport.Retries = 1;
                 return true;
-
             }
             catch(Exception ex)
             {
@@ -168,25 +186,94 @@ namespace M_Pig.COM
         public void ModbusDeinit()
         {
             Port.Close();
-            tmr.Stop();
-            tmr.Elapsed -= Tmr_Elapsed;
         }
 
-        private void Tmr_Elapsed(object sender, ElapsedEventArgs e)
+
+        private void DataRead(int controlerIndex)
         {
-            ushort[] a = master.ReadInputRegisters(BitConverter.GetBytes(controler.ModbusAddress)[1],13,1);
-            controler.RoomCount =  a[1];
-            Console.WriteLine(controler.RoomCount);
-        }
+            for (ushort i = 0; i < Controler[controlerIndex].RoomCount; i++)
+            {
+                //读取栏位基本信息
+                ushort[] a = Master.ReadInputRegisters(
+                   BitConverter.GetBytes(Controler[controlerIndex].ModbusAddress)[1], 14, 4);
+                Controler[controlerIndex].Room[i].RoomNum = a[0];
+                Controler[controlerIndex].Room[i].BatcherCalibration = a[1];
+                Controler[controlerIndex].Room[i].Threshold = a[2];
+                Controler[controlerIndex].Room[i].PigsCount = a[3];
+                //controlerClass.
 
+                for (ushort d=0;d< Controler[controlerIndex].Room[i].PigsCount; d++)
+                {
+                    ushort[] temp= Master.ReadInputRegisters(
+                        BitConverter.GetBytes(Controler[controlerIndex].ModbusAddress)[1], (ushort)(18 + (10 * d)), 10);
+                    byte[] p = {
+                        0,
+                        BitConverter.GetBytes(temp[0])[0],
+                        BitConverter.GetBytes(temp[1])[0],
+                        BitConverter.GetBytes(temp[2])[0],
+                        BitConverter.GetBytes(temp[3])[0],
+                        BitConverter.GetBytes(temp[4])[0],
+                        BitConverter.GetBytes(temp[5])[0],
+                        BitConverter.GetBytes(temp[6])[0]
+                    };
+                    p.Reverse();
+                    Controler[controlerIndex].Room[i].Pig[d].PigSerial = BitConverter.ToInt64(p, 0);
+                    Controler[controlerIndex].Room[i].Pig[d].BatcherSum = temp[7];
+                    Controler[controlerIndex].Room[i].Pig[d].WaterSum = temp[8];
+                    Controler[controlerIndex].Room[i].Pig[d].Weight = temp[9];
+
+                    Console.Write(i.ToString() + "," + d.ToString() + "," + Controler[controlerIndex].Room[i].Pig[d].PigSerial.ToString() + "," + Controler[controlerIndex].Room[i].Pig[d].Weight.ToString() + "\r\n");
+                }
+            }
+
+        }
+        private void AddControler(ushort[] vs)
+        {
+            ushort[] temp = vs;
+            ControlerClass a = new ControlerClass
+            {
+                DeviceID = temp[0],
+                RadioChannel = temp[8],
+                SubnetAddress = temp[9],
+                ModbusAddress = temp[10],
+                Baundrate = temp[11],
+                RoomCount = temp[12]
+            };
+            Controler.Add(a);
+            Console.Write(Controler.Count);
+            //Console.Write("Controler[0].RoomCount  "+ Controler[0].RoomCount.ToString()+"\r\n");
+        }
+        public void ControlerScan()
+        {
+            Master.Transport.ReadTimeout = 50;
+            Controler.Clear();
+            for (byte i=0;i<10;i++)
+            {
+                try
+                {
+                    ushort[] temp = Master.ReadInputRegisters(i, 1, 13);
+                    AddControler(temp);
+                }
+                catch
+                {
+                    //Console.WriteLine("nothing!!");
+                }
+                finally
+                {
+                    DeviceScanProgressEvent(i);
+                }
+            }
+            Master.Transport.ReadTimeout = 500;
+        }
         public MyModbus()
         {
-
+            
         }
         public MyModbus(string num)
         {
-            ComNum = num;
-            ModbusInit(ComNum);
+            ModbusInit(num);
         } 
     }
+
+
 }

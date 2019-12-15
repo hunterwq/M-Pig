@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:M_Pig"
-        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui" xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" x:Class="M_Pig.MainWindow"
+        xmlns:dxe="http://schemas.devexpress.com/winfx/2008/xaml/editors" xmlns:dxlc="http://schemas.devexpress.com/winfx/2008/xaml/layoutcontrol" xmlns:dxwui="http://schemas.devexpress.com/winfx/2008/xaml/windowsui" xmlns:dx="http://schemas.devexpress.com/winfx/2008/xaml/core" xmlns:dxc="http://schemas.devexpress.com/winfx/2008/xaml/charts" x:Class="M_Pig.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Loaded="Window_Loaded" WindowStyle="SingleBorderWindow" >
     <Grid>
@@ -21,22 +21,38 @@
             <dxwui:HamburgerMenu.Content>
                 <dxwui:NavigationFrame >
                     <TabControl BorderThickness="0" Background="#FFF0F2F3">
-                        <TabItem Visibility="Collapsed" IsSelected="{Binding ElementName=HmSetButton, Path=IsSelected,Mode=OneWay}">
+                        <TabItem Visibility="Collapsed" IsSelected="{Binding IsSelected, ElementName=HmSetButton, Mode=OneWay}">
                             <Grid>
                                 <ComboBox x:Name="comSelect" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="120"/>
                                 <ToggleButton x:Name="comButton" Content="打开串口" HorizontalAlignment="Left" Margin="10,60,0,0" VerticalAlignment="Top" Width="120" BorderThickness="0" Checked="comButton_Checked" Unchecked="comButton_Unchecked"/>
+                                <Button x:Name="deviceScan" Content="扫描设备" Width="120" HorizontalAlignment="Left" Margin="10,90,0,0"  BorderThickness="0" VerticalAlignment="Top" Click="DeviceScan_Click"/>
+                                <CheckBox x:Name="dataScan" Content="    打开数据读取" HorizontalAlignment="Left" Height="100" VerticalAlignment="Top" Width="120" Margin="10,120,0,0" Checked="dataScan_Checked" Unchecked="dataScan_Unchecked"/>
+                                <DataGrid x:Name="DeveiceList" IsReadOnly="True" Margin="140,10,10,10" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="False" >
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="设备地址" Binding="{Binding ModbusAddress}" Width="*"/>
+                                        <DataGridTextColumn Header="设备ID" Binding="{Binding DeviceID}" Width="*"/>
+                                        <DataGridTextColumn Header="无线信道" Binding="{Binding RadioChannel}" Width="*"/>
+                                        <DataGridTextColumn Header="子网地址" Binding="{Binding SubnetAddress}" Width="*"/>
+                                        <DataGridTextColumn Header="猪栏数量" Binding="{Binding RoomCount}" Width="*"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
                             </Grid>
                         </TabItem>
-                        <TabItem Visibility="Collapsed">
+                        <TabItem Visibility="Collapsed" IsSelected="{Binding IsSelected, ElementName=Main, Mode=OneWay}">
                             <Grid>
-                                <TextBox x:Name="textLog" />
+                                <DataGrid x:Name="DataList" IsReadOnly="True" Margin="10,10,10,10" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="False" >
+                                    <DataGrid.Columns>
+                                        
+                                    </DataGrid.Columns>
+                                </DataGrid>
                             </Grid>
                         </TabItem>
                     </TabControl>
                 </dxwui:NavigationFrame>
             </dxwui:HamburgerMenu.Content>
-            <dxwui:HamburgerMenuNavigationButton x:Name="Main" Content="Home" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Navigation/Home_16x16.png}" GlyphHeight="16"  IsSelected="false"/>
-            <dxwui:HamburgerMenuNavigationButton x:Name="HmSetButton" Content="New Page" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Actions/AddItem_16x16.png}" GlyphHeight="16" IsSelected="true"/>
+            <dxwui:HamburgerMenuNavigationButton x:Name="Main" Content="实时数据" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Navigation/Home_16x16.png}" GlyphHeight="16"  IsSelected="false"/>
+            <dxwui:HamburgerMenuNavigationButton x:Name="HmSetButton" Content="系统设置" GlyphWidth="16" Glyph="{dx:DXImage Office2013/Actions/AddItem_16x16.png}" GlyphHeight="16" IsSelected="true"/>
             <dxwui:HamburgerMenuHyperlinkButton  Content="Support" NavigateUri="https://www.devexpress.com/Support/"/>
         </dxwui:HamburgerMenu>
 

@@ -9,33 +9,48 @@ namespace M_Pig.Controler
 {
     class ControlerClass
     {
-        public InputRegs inputRegs{ get; set; }
+        //public InputRegs inputRegs{ get; set; }
 
-        public ushort DeviceID { get; set; }
-        public ushort RadioChannel { get; set; }
-        public ushort SubnetAddress { get; set; }
-        public ushort ModbusAddress { get; set; }
-        public ushort Baundrate { get; set; }
-        public ushort RoomCount { get; set; }
+        public ushort DeviceID { get; set; } = new ushort();
+        public ushort RadioChannel { get; set; } = new ushort();
+        public ushort SubnetAddress { get; set; } = new ushort();
+        public ushort ModbusAddress { get; set; } = new ushort();
+        public ushort Baundrate { get; set; } = new ushort();
+        public ushort RoomCount { get; set; } = new ushort();
         public RoomClass[] Room { get; set; } = new RoomClass[30];
+        public ControlerClass()
+        {
+            for (uint i = 0; i < 30; i++)
+                Room[i] = new RoomClass();
+        }
 
     }
     class RoomClass
     {
-        public ushort RoomNum { get; set; }
-        public ushort BatcherCalibration { get; set; }
-        public ushort Threshold { get; set; }
-        public ushort PigsCount { get; set; }
+        public ushort RoomNum { get; set; } = new ushort();
+        public ushort BatcherCalibration { get; set; } = new ushort();
+        public ushort Threshold { get; set; } = new ushort();
+        public ushort PigsCount { get; set; } = new ushort();
         public PigClass[] Pig { get; set; } = new PigClass[30];
+        public RoomClass()
+        {
+            for (uint i = 0; i < 30; i++)
+                Pig[i] = new PigClass();
+        }
     }
     class PigClass
     {
-        public string PigSerial { get; set; }
-        public ushort BatcherSum { get; set; }
-        public ushort WaterSum { get; set; }
-        public ushort Weight { get; set; }
+        public long PigSerial { get; set; } = new long();
+        public ushort BatcherSum { get; set; } = new ushort();
+        public ushort WaterSum { get; set; } = new ushort();
+        public ushort Weight { get; set; } = new ushort();
 
     }
+    
+    
+    
+    
+    /*
     [StructLayoutAttribute(LayoutKind.Explicit, Pack = 1)]
     public struct InputRegs
     {
@@ -85,5 +100,5 @@ namespace M_Pig.Controler
         public ushort WaterSum;
         [FieldOffset(9 * 2)]
         public ushort Weight;
-    }
+    }*/
 }

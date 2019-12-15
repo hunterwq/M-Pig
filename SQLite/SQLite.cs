@@ -1,6 +1,8 @@
-﻿using SQLite.CodeFirst;
+﻿using M_Pig.Controler;
+using SQLite.CodeFirst;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Common;
 using System.Data.Entity;
@@ -13,7 +15,8 @@ namespace M_Pig.SQLite
 
     public class SqliteDbContext : DbContext
     {
-        public DbSet<Employee> Employees { get; set; }
+        //public DbSet<PigData> Pigs { get; set; }
+        public DbSet<PigData> Pigs { get; set; }
         public SqliteDbContext() : base("connectionSQLite")
         {
             ConfigurationFunc();
@@ -44,12 +47,21 @@ namespace M_Pig.SQLite
         }
        
     }
-    [Table("Employee")]
-    public partial class Employee
-    {
-        public int EmployeeID { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-    }
     
+    [Table("PigData")]
+    public partial class PigData
+    {
+        [Key]
+        public long PigID { get; set; }
+        public DateTime Date { get; set; } = new DateTime();
+        public int BatcherSum { get; set; }
+        public int WaterSum { get; set; }
+        public int Weight { get; set; }
+        public int DeviceID { get; set; }
+        public int RoomNum { get; set; }
+        public int BatcherCalibration { get; set; }
+        public int Threshold { get; set; }
+        public int Days { get; set; }
+    }
+
 }
