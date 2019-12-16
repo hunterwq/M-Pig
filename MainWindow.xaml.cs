@@ -2,6 +2,7 @@
 using M_Pig.SQLite;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.SQLite;
 using System.Linq;
 using System.Text;
@@ -32,6 +33,7 @@ namespace M_Pig
         private MyModbus modbus { get; set; } = new MyModbus();
         private Thread t_scanDevice { get; set; }
         private Thread t_scanData { get; set; }
+        private ObservableCollection<PigData> pigDatas{ get; set; }=new ObservableCollection<PigData>();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -43,10 +45,27 @@ namespace M_Pig
             comSelect.SelectedIndex = 0;
 
             DeveiceList.DataContext = modbus.Controler;
+            DataList.DataContext = pigDatas;
 
+            modbus.PigDataUpdateEvent += Modbus_PigDataUpdateEvent;
 
             SqliteDbContext context = new SqliteDbContext();
             var b = context.Pigs.Where(p => p.PigID == 1).FirstOrDefault();
+        }
+
+        private void Modbus_PigDataUpdateEvent(PigData d)
+        {
+            //throw new NotImplementedException();
+            _ = Dispatcher.BeginInvoke((Action)delegate ()
+            {
+                PigData pig = new PigData();
+                pig = d;
+                int v = pigDatas.ToList().FindIndex(i => i.PigID == d.PigID);
+                if(v>=0)
+                    pigDatas.RemoveAt(v);
+                pigDatas.Insert(0, pig);
+                //DeveiceList.Items.Refresh();
+            });
         }
 
         private void comButton_Checked(object sender, RoutedEventArgs e)

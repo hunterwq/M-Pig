@@ -57,7 +57,7 @@ namespace M_Pig.SQLite
         public int BatcherSum { get; set; }
         public int WaterSum { get; set; }
         public int Weight { get; set; }
-        public int DeviceID { get; set; }
+        public int DeviceAddress { get; set; }
         public int RoomNum { get; set; }
         public int BatcherCalibration { get; set; }
         public int Threshold { get; set; }

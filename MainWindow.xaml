@@ -41,7 +41,7 @@
                         </TabItem>
                         <TabItem Visibility="Collapsed" IsSelected="{Binding IsSelected, ElementName=Main, Mode=OneWay}">
                             <Grid>
-                                <DataGrid x:Name="DataList" IsReadOnly="True" Margin="10,10,10,10" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserAddRows="False" >
+                                <DataGrid x:Name="DataList" IsReadOnly="True" Margin="10,10,10,10" ItemsSource="{Binding}" CanUserAddRows="False" >
                                     <DataGrid.Columns>
                                         
                                     </DataGrid.Columns>

@@ -1,4 +1,5 @@
 ﻿using M_Pig.Controler;
+using M_Pig.SQLite;
 using Modbus.Device;
 using System;
 using System.Collections.Generic;
@@ -142,6 +143,10 @@ namespace M_Pig.COM
     {
         public delegate void DeviceScanProgress(int d);
         public event DeviceScanProgress DeviceScanProgressEvent;
+
+        public delegate void PigDataUpdate(PigData d);
+        public event PigDataUpdate PigDataUpdateEvent;
+
         public List<ControlerClass> Controler { get; set; } = new List<ControlerClass>();
         public IModbusSerialMaster Master { get; set; }
 
@@ -221,6 +226,22 @@ namespace M_Pig.COM
                     Controler[controlerIndex].Room[i].Pig[d].BatcherSum = temp[7];
                     Controler[controlerIndex].Room[i].Pig[d].WaterSum = temp[8];
                     Controler[controlerIndex].Room[i].Pig[d].Weight = temp[9];
+
+                    PigData pigData = new PigData
+                    {
+                        PigID = Controler[controlerIndex].Room[i].Pig[d].PigSerial,
+                        Date = DateTime.Now,
+                        BatcherSum = Controler[controlerIndex].Room[i].Pig[d].BatcherSum,
+                        WaterSum = Controler[controlerIndex].Room[i].Pig[d].WaterSum,
+                        Weight = Controler[controlerIndex].Room[i].Pig[d].Weight,
+                        DeviceAddress = Controler[controlerIndex].ModbusAddress,
+                        RoomNum = i,
+                        BatcherCalibration = Controler[controlerIndex].Room[i].BatcherCalibration,
+                        Threshold = Controler[controlerIndex].Room[i].Threshold,
+                    };
+
+                    PigDataUpdateEvent(pigData);
+
 
                     Console.Write(i.ToString() + "," + d.ToString() + "," + Controler[controlerIndex].Room[i].Pig[d].PigSerial.ToString() + "," + Controler[controlerIndex].Room[i].Pig[d].Weight.ToString() + "\r\n");
                 }
