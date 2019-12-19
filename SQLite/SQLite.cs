@@ -15,7 +15,6 @@ namespace M_Pig.SQLite
 
     public class SqliteDbContext : DbContext
     {
-        //public DbSet<PigData> Pigs { get; set; }
         public DbSet<PigData> Pigs { get; set; }
         public SqliteDbContext() : base("connectionSQLite")
         {
@@ -52,7 +51,8 @@ namespace M_Pig.SQLite
     public partial class PigData
     {
         [Key]
-        public long PigID { get; set; }
+        public long MessageID { get; set; }
+        public long PigSerial { get; set; }
         public DateTime Date { get; set; } = new DateTime();
         public int BatcherSum { get; set; }
         public int WaterSum { get; set; }
@@ -63,5 +63,23 @@ namespace M_Pig.SQLite
         public int Threshold { get; set; }
         public int Days { get; set; }
     }
+    public class SqliteOperate
+    {
 
+        public SqliteDbContext sqliteDb { get; set; }
+        public SqliteOperate()
+        {
+            sqliteDb = new SqliteDbContext();
+            var b = sqliteDb.Pigs.Where(p => p.PigSerial == 1).FirstOrDefault();
+            
+        }
+        public void SqliteAddPig(PigData pig)
+        {
+            sqliteDb.Pigs.Add(pig);
+            _ = sqliteDb.SaveChanges();
+            //Console.WriteLine("ssssssssssssssssssssssssssssssssss");
+        }
+
+
+    }
 }

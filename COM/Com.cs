@@ -229,7 +229,7 @@ namespace M_Pig.COM
 
                     PigData pigData = new PigData
                     {
-                        PigID = Controler[controlerIndex].Room[i].Pig[d].PigSerial,
+                        PigSerial = Controler[controlerIndex].Room[i].Pig[d].PigSerial,
                         Date = DateTime.Now,
                         BatcherSum = Controler[controlerIndex].Room[i].Pig[d].BatcherSum,
                         WaterSum = Controler[controlerIndex].Room[i].Pig[d].WaterSum,

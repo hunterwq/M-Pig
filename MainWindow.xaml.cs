@@ -33,6 +33,7 @@ namespace M_Pig
         private MyModbus modbus { get; set; } = new MyModbus();
         private Thread t_scanDevice { get; set; }
         private Thread t_scanData { get; set; }
+        private Thread t_sqlite { get; set; }
         private ObservableCollection<PigData> pigDatas{ get; set; }=new ObservableCollection<PigData>();
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -49,8 +50,18 @@ namespace M_Pig
 
             modbus.PigDataUpdateEvent += Modbus_PigDataUpdateEvent;
 
-            SqliteDbContext context = new SqliteDbContext();
-            var b = context.Pigs.Where(p => p.PigID == 1).FirstOrDefault();
+            t_sqlite = new Thread(SqliteThread);
+            t_sqlite.Start();
+
+        //SqliteDbContext context = new SqliteDbContext();
+        //var b = context.Pigs.Where(p => p.PigID == 1).FirstOrDefault();
+        }
+
+        private void SqliteThread()
+        {
+            //throw new NotImplementedException();
+            SqliteOperate sqliteOperate = new SqliteOperate();
+            modbus.PigDataUpdateEvent += sqliteOperate.SqliteAddPig;
         }
 
         private void Modbus_PigDataUpdateEvent(PigData d)
@@ -60,7 +71,7 @@ namespace M_Pig
             {
                 PigData pig = new PigData();
                 pig = d;
-                int v = pigDatas.ToList().FindIndex(i => i.PigID == d.PigID);
+                int v = pigDatas.ToList().FindIndex(i => i.PigSerial == d.PigSerial);
                 if(v>=0)
                     pigDatas.RemoveAt(v);
                 pigDatas.Insert(0, pig);
